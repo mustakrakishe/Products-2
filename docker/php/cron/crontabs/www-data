@@ -1,0 +1,2 @@
+* * * * * /usr/local/bin/php /var/www/html/artisan auth:prune-expired-link-registration-tokens
+* * * * * /usr/local/bin/php /var/www/html/artisan auth:prune-expired-link-login-tokens

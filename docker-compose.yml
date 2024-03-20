@@ -1,0 +1,61 @@
+services:
+      
+  mysql:
+    image: mysql:8.3
+    environment:
+      MYSQL_ROOT_PASSWORD: supersecret
+      MYSQL_USER: $DB_USERNAME
+      MYSQL_PASSWORD: $DB_PASSWORD
+      MYSQL_DATABASE: $DB_DATABASE
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: mysql -u $$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE
+      interval: 3s
+      timeout: 3s
+      retries: 5
+      start_period: 5m
+
+  phpmyadmin:
+    depends_on:
+      mysql:
+        condition: service_healthy
+    image: phpmyadmin:5.2
+    environment:
+      MYSQL_ROOT_PASSWORD: supersecret
+      MYSQL_USER: $DB_USERNAME
+      MYSQL_PASSWORD: $DB_PASSWORD
+      PMA_HOST: mysql
+    ports:
+      - 8080:80
+
+  php:
+    depends_on:
+      mysql:
+        condition: service_healthy
+    build:
+      dockerfile: ./docker/php/Dockerfile
+      context: .
+    extra_hosts:
+      host.docker.internal: host-gateway
+    volumes:
+      - ./laravel:/var/www/html
+      - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+      - ./docker/php/cron/crontabs/www-data:/etc/cron.d/www-data
+      
+  nginx:
+    depends_on:
+      - php
+    image: nginx:1.25
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./laravel:/var/www/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./docker/nginx/ssl/example.crt:/etc/nginx/ssl/example.crt
+      - ./docker/nginx/ssl/example.key:/etc/nginx/ssl/example.key
+
+volumes:
+  db-data:
