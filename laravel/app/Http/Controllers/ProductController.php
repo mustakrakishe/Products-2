@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Product\CreateProductRequest;
+use App\Models\Currency;
 use App\Models\Product;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -39,9 +42,9 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(Product $product): View
     {
-        //
+        return view('products.show', compact('product'));
     }
 
     /**
