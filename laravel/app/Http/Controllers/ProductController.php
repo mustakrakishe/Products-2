@@ -6,6 +6,7 @@ use App\Http\Requests\Product\CreateProductRequest;
 use App\Models\Currency;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -16,7 +17,7 @@ class ProductController extends Controller
     public function index(): View
     {
         $products = Product::with('currency')->paginate(
-            perPage: 8,
+            perPage: 7,
             page: request()->page
         );
 
@@ -26,17 +27,21 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
-        //
+        $currencies = Currency::all();
+
+        return view('products.create', compact('currencies'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateProductRequest $request): RedirectResponse
     {
-        //
+        $product = Product::create($request->validated());
+
+        return redirect()->route('products.show', ['product' => $product->id]);
     }
 
     /**
