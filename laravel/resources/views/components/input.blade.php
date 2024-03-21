@@ -1,9 +1,23 @@
+@isset($label)
 <div class="flex items-center justify-between">
-    <label for="password" class="block text-sm font-medium leading-6 text-gray-50">{{ $label }}</label>
+    <label for="password" class="block mb-2 text-sm font-medium @error($id) text-red-500 @else text-gray-50 @enderror">{{ $label }}</label>
 </div>
+@endisset
 
 <div class="mt-2">
-    <input {{ $attributes }} id="{{ $id }}" type="{{ $type }}" name="{{ $name }}" class="block w-full rounded-md border-0 py-1.5 text-gray-50 shadow-sm ring-1 ring-inset @error($id) ring-red-700 @else ring-gray-700 @enderror placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-gray-800" value="{{ $slot }}">
+    <input
+        {{ $attributes }}
+        id="{{ $id }}"
+        type="{{ $type }}"
+        name="{{ $name }}"
+        value="{{ $slot }}"
+        class="
+            border text-sm rounded-lg block w-full p-2.5
+            @error($id) bg-red-50 border-red-500 ext-red-900 focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500
+            @else bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
+            @enderror
+        "
+    >
 </div>
 
 @error($id)
