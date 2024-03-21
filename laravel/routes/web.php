@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Web\Auth\LoginController;
 use App\Http\Controllers\Web\Auth\LogoutController;
 use App\Http\Controllers\Web\Auth\RegisterController;
@@ -35,3 +36,5 @@ Route::prefix('auth')->group(function () {
         });
     });
 });
+
+Route::resource('products', ProductController::class)->middleware('auth');
