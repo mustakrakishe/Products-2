@@ -10,8 +10,9 @@
             </div> 
 
             <div class="relative overflow-x-auto">
-                <form action="{{ route('products.update') }}" method="post">
+                <form action="{{ route('products.update', ['product' => $product->id]) }}" method="POST">
                     @csrf
+                    @method('PUT')
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <tbody>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -19,7 +20,7 @@
                                     Title
                                 </th>
                                 <td class="px-6 py-4">
-                                    <x-input type="text" id="title" name="title">{{ $product->title }}</x-input>
+                                    <x-input type="text" id="title" name="title">{{ old('title') ?? $product->title }}</x-input>
                                 </td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -27,7 +28,7 @@
                                     Price
                                 </th>
                                 <td class="px-6 py-4">
-                                    <x-input type="number" step="0.01" id="price" name="price">{{ $product->price }}</x-input>
+                                    <x-input type="number" step="0.01" id="price" name="price">{{ old('price') ?? $product->price }}</x-input>
                                 </td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -37,7 +38,7 @@
                                 <td class="px-6 py-4">
                                     <select id="currency_id" name="currency_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                         @foreach ($currencies as $currency)
-                                            <option value="{{ $currency->id }}" @if($currency->id === $product->currency_id) selected @endif>{{ $currency->code }}</option>
+                                            <option value="{{ $currency->id }}" @if($currency->id === (old('currency_id') ?? $product->currency_id)) selected @endif>{{ $currency->code }}</option>
                                         @endforeach
                                     </select>
                                 </td>
