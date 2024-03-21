@@ -12,13 +12,16 @@
         <form class="space-y-6" action="#" method="POST">
             @csrf
             <div>
-                <x-input id="email" name="email" type="email" required label="Email address"></x-input>
+                <x-input id="name" name="name" type="text" label="Name">{{ old('name') }}</x-input>
             </div>
             <div>
-                <x-input id="password" name="password" type="password" required label="Password"></x-input>
+                <x-input id="email" name="email" type="text" label="Email address">{{ old('email') }}</x-input>
             </div>
             <div>
-                <x-input id="confirm-password" name="confirm-password" type="password" required label="Confirm password"></x-input>
+                <x-input id="password" name="password" type="password" label="Password"></x-input>
+            </div>
+            <div>
+                <x-input id="password_confirmation" name="password_confirmation" type="password" label="Password confirmation"></x-input>
             </div>
 
             <div>
