@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class TrustedHost
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (!array_key_exists($request->host(), config('clients'))) {
+            throw new AuthorizationException(
+                'This action is forbidden for untrusted hosts.'
+            );
+        }
+
+        return $next($request);
+    }
+}
