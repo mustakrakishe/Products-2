@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Currency;
+use App\Models\Product;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -19,5 +20,8 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        Currency::factory(3)->create();
+        Product::factory(10)->create();
     }
 }
