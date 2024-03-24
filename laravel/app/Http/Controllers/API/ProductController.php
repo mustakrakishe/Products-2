@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\CreateProductRequest;
 use App\Http\Resources\ProductCollection;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
@@ -23,6 +24,16 @@ class ProductController extends Controller
             );
 
         return (new ProductCollection($products))->response();
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(CreateProductRequest $request): JsonResponse
+    {
+        $product = Product::create($request->validated());
+
+        return (new ProductResource($product))->response();
     }
 
     /**
