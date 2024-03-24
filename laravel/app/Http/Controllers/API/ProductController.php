@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\CreateProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\ProductCollection;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
@@ -41,6 +42,16 @@ class ProductController extends Controller
      */
     public function show(Product $product): JsonResponse
     {
+        return (new ProductResource($product))->response();
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateProductRequest $request, Product $product): JsonResponse
+    {
+        $product->update($request->validated());
+
         return (new ProductResource($product))->response();
     }
 }
