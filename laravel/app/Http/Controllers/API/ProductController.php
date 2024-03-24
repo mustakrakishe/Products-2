@@ -9,6 +9,7 @@ use App\Http\Resources\ProductCollection;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
@@ -53,5 +54,15 @@ class ProductController extends Controller
         $product->update($request->validated());
 
         return (new ProductResource($product))->response();
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Product $product): JsonResponse
+    {
+        $product->delete();
+
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 }
