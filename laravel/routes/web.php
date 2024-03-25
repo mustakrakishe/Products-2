@@ -11,30 +11,28 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::prefix('auth')->group(function () {
-    Route::prefix('register')->controller(RegisterController::class)->middleware('guest')->group(function () {
-        Route::get('', 'show')->name('register');
-        Route::post('', 'register');
+Route::middleware('guest')->group(function () {
+    Route::prefix('auth')->group(function () {
+        Route::get('register', [RegisterController::class, 'show'])->name('register');
+        Route::post('register', [RegisterController::class, 'register']);
 
-        Route::get('verify', 'getVerificationNoticePage')->name('verification.notice');
-        Route::get('verify/{id}/{hash}', 'verify')->middleware('signed')->name('verification.verify');
-    });
+        Route::get('email/verify', [RegisterController::class, 'getVerificationNoticePage'])->name('verification.notice');
+        Route::get('email/verify/{id}/{hash}', [RegisterController::class, 'verify'])->middleware('signed')->name('verification.verify');
+    
+        Route::get('login', [LoginController::class, 'show'])->name('login');
+        Route::post('login', [LoginController::class, 'login']);
 
-    Route::get('logout', [LogoutController::class, 'logout'])->middleware('auth')->name('logout');
-
-    Route::prefix('login')->middleware('guest')->group(function () {
-        Route::controller(LoginController::class)->group(function () {
-            Route::get('', 'show')->name('login');
-            Route::post('', 'login');
-        });
-
-        Route::prefix('password/reset')->controller(ResetPasswordController::class)->group(function () {
-            Route::get('send', 'getLinkRequestForm')->name('password.reset.send');
-            Route::post('send', 'sendLink');
-            Route::get('{token}', 'getResetForm')->name('password.reset');
-            Route::post('', 'reset')->name('password.update');
-        });
+        Route::get('password/reset/send', [ResetPasswordController::class, 'getLinkRequestForm'])->name('password.reset.send');
+        Route::post('password/reset/send', [ResetPasswordController::class, 'sendLink']);
+        Route::get('password/reset/{token}', [ResetPasswordController::class, 'getResetForm'])->name('password.reset');
+        Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
     });
 });
 
-Route::resource('products', ProductController::class)->middleware('auth');
+Route::middleware('auth')->group(function () {
+    Route::prefix('auth')->group(function () {
+        Route::get('logout', [LogoutController::class, 'logout'])->name('logout');
+    });
+
+    Route::resource('products', ProductController::class);
+});
