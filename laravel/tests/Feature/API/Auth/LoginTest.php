@@ -22,7 +22,7 @@ class LoginTest extends TestCase
     }
 
     #[DataProvider('validInputDataProvider')]
-    public function test_if_input_is_valid_then_returns_actual_data(array $input): void
+    public function test_if_input_is_valid_then_creates_correct_records_and_returns_actual_data(array $input): void
     {
         $user = User::factory()->create([
             'email'    => trim($input['email']),
@@ -34,6 +34,14 @@ class LoginTest extends TestCase
         $token = $user->tokens()->first();
 
         $response->assertOk();
+
+        $this->assertNotNull($token->id);
+        $this->assertNull($token->last_used_at);
+        $this->assertNotNull($token->created_at);
+        $this->assertNotNull($token->updated_at);
+        $this->assertEquals($token->tokenable_id, $user->id);
+        $this->assertCount(1, $user->tokens);
+
         $response->assertJson([
             'data' => [
                 'id'           => $token->id,
