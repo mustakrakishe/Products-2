@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
 use Laravel\Sanctum\PersonalAccessToken;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class VerifyTest extends TestCase
@@ -85,5 +86,55 @@ class VerifyTest extends TestCase
             $token->id,
             PersonalAccessToken::findToken($response->decodeResponseJson()['data']['token'])->id
         );
+    }
+
+    #[DataProvider('invalidVerifyDataProvider')]
+    public function test_if_input_is_invalid_then_returns_forbidden(callable $createUrlUsingCallback): void
+    {
+        $user = User::factory()->create();
+        $url = $createUrlUsingCallback(
+            $user->getKey(),
+            $user->getEmailForVerification()
+        );
+
+        $response = $this->get($url);
+
+        $response->assertForbidden();
+    }
+
+    public static function invalidVerifyDataProvider(): array
+    {
+        return [
+            'signature_is_wrong' => [
+                'create_url_using_callback' => function (int $id, string $email) {
+                    return route('api.verification.verify', [
+                        'id'        => $id,
+                        'hash'      => sha1($email),
+                        'signature' => 'wrong_signature',
+                        'expires'   => Carbon::now()->addMinutes(config('auth.verification.expire', 60)),
+                    ]);
+                },
+            ],
+            'hash_is_for_different_email' => [
+                'create_url_using_callback' => function (int $id, string $email) {
+                    $hash = sha1(User::factory()->create()->email);
+                    return URL::temporarySignedRoute(
+                        'api.verification.verify',
+                        Carbon::now()->addMinutes(config('auth.verification.expire', 60)),
+                        compact('id', 'hash')
+                    );
+                },
+            ],
+            'link_is_expired' => [
+                'create_url_using_callback' => function (int $id, string $email) {
+                    $hash = sha1($email);
+                    return URL::temporarySignedRoute(
+                        'api.verification.verify',
+                        Carbon::now()->subMinutes(1),
+                        compact('id', 'hash')
+                    );
+                },
+            ],
+        ];
     }
 }
