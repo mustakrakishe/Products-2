@@ -91,7 +91,7 @@ class LoginTest extends TestCase
             ],
             'email_is_shortest' => [
                 [
-                    'email'    => 'a@a.a',
+                    'email'    => 'a@a',
                     'password' => 'password',
                 ],
             ],
@@ -165,13 +165,6 @@ class LoginTest extends TestCase
                 'errors' => ['email'],
                 'input'   => [
                     'email'    => 123,
-                    'password' => 'password',
-                ],
-            ],
-            'email_is_too_short' => [
-                'errors' => ['email'],
-                'input'   => [
-                    'email'    => 'u@e',
                     'password' => 'password',
                 ],
             ],

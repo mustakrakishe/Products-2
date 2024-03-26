@@ -124,7 +124,7 @@ class RegisterTest extends TestCase
             ]],
             'email_is_shortest' => [[
                 'name'                  => 'New User',
-                'email'                 => 'a@a.a',
+                'email'                 => 'a@a',
                 'password'              => 'password',
                 'password_confirmation' => 'password',
             ]],
