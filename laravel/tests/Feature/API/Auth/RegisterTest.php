@@ -154,4 +154,177 @@ class RegisterTest extends TestCase
             ]],
         ];
     }
+
+    #[DataProvider('invalidRegisterDataProvider')]
+    public function test_if_input_is_invalid_then_fails_validation(string $invalid, array $input): void
+    {
+        $response = $this->post('api/auth/register', $input);
+
+        $response->assertUnprocessable();
+        $response->assertInvalid($invalid);
+    }
+
+    public static function invalidRegisterDataProvider(): array
+    {
+        return [
+            'name_is_missing' => [
+                'invalid' => 'name',
+                'input'   => [
+                    'email'                 => 'user@example.com',
+                    'password'              => 'password',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'name_is_null' => [
+                'invalid' => 'name',
+                'input'   => [
+                    'name'                  => null,
+                    'email'                 => 'user@example.com',
+                    'password'              => 'password',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'name_is_empty' => [
+                'invalid' => 'name',
+                'input'   => [
+                    'name'                  => '',
+                    'email'                 => 'user@example.com',
+                    'password'              => 'password',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'name_has_wrong_data_type' => [
+                'invalid' => 'name',
+                'input'   => [
+                    'name'                  => 123,
+                    'email'                 => 'user@example.com',
+                    'password'              => 'password',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'name_is_too_long' => [
+                'invalid' => 'name',
+                'input'   => [
+                    'name'                  => str_repeat('a', 256),
+                    'email'                 => 'user@example.com',
+                    'password'              => 'password',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'email_is_missing' => [
+                'invalid' => 'email',
+                'input' => [
+                    'name'                  => 'New User',
+                    'password'              => 'password',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'email_is_null' => [
+                'invalid' => 'email',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => null,
+                    'password'              => 'password',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'email_is_empty' => [
+                'invalid' => 'email',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => '',
+                    'password'              => 'password',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'email_has_wrong_data_type' => [
+                'invalid' => 'email',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => 123,
+                    'password'              => 'password',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'email_has_wrong_format' => [
+                'invalid' => 'email',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => 'user.example.com',
+                    'password'              => 'password',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'email_is_too_long' => [
+                'invalid' => 'email',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => 'u@'.str_repeat('a', 254),
+                    'password'              => 'password',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'password_is_missing' => [
+                'invalid' => 'password',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => 'user@example.com',
+                    'password_confirmation' => 'password',
+                ],
+            ],
+            'password_is_null' => [
+                'invalid' => 'password',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => 'user@example.com',
+                    'password'              => null,
+                    'password_confirmation' => null,
+                ],
+            ],
+            'password_is_empty' => [
+                'invalid' => 'password',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => 'user@example.com',
+                    'password'              => '',
+                    'password_confirmation' => '',
+                ],
+            ],
+            'password_has_wrong_data_type' => [
+                'invalid' => 'password',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => 'user@example.com',
+                    'password'              => 123,
+                    'password_confirmation' => 123,
+                ],
+            ],
+            'password_is_too_long' => [
+                'invalid' => 'password',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => 'user@example.com',
+                    'password'              => str_repeat('a', 256),
+                    'password_confirmation' => str_repeat('a', 256),
+                ],
+            ],
+            'password_confirmation_is_missing' => [
+                'invalid' => 'password',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => 'user@example.com',
+                    'password'              => 'password',
+                ],
+            ],
+            'password_confirmation_is_different_form_password' => [
+                'invalid' => 'password',
+                'input' => [
+                    'name'                  => 'New User',
+                    'email'                 => 'user@example.com',
+                    'password'              => 'password',
+                    'password_confirmation' => 'password_confirmation',
+                ],
+            ],
+        ];
+    }
 }
