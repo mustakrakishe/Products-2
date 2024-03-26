@@ -4,6 +4,7 @@ namespace Tests\Feature\API\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
 use Laravel\Sanctum\PersonalAccessToken;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -34,14 +35,23 @@ class LoginTest extends TestCase
         $token = $user->tokens()->first();
 
         $response->assertOk();
+        $this->assertDatabaseRecordsAreCorrect($user, $token);
+        $this->assertResourceReturnsActualData($response, $user, $token);
 
+    }
+
+    protected function assertDatabaseRecordsAreCorrect(User $user, PersonalAccessToken $token): void
+    {
         $this->assertNotNull($token->id);
         $this->assertNull($token->last_used_at);
         $this->assertNotNull($token->created_at);
         $this->assertNotNull($token->updated_at);
         $this->assertEquals($token->tokenable_id, $user->id);
         $this->assertCount(1, $user->tokens);
+    }
 
+    protected function assertResourceReturnsActualData(TestResponse $response, User $user, PersonalAccessToken $token): void
+    {
         $response->assertJson([
             'data' => [
                 'id'           => $token->id,
