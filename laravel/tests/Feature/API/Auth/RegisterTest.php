@@ -327,4 +327,18 @@ class RegisterTest extends TestCase
             ],
         ];
     }
+
+    public function test_if_host_is_untrusted_then_returns_forbidden(): void
+    {
+        config(['clients' => []]);
+
+        $response = $this->post('api/auth/register', [
+            'name'                  => 'New User',
+            'email'                 => 'user@example.com',
+            'password'              => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        $response->assertForbidden();
+    }
 }
