@@ -20,7 +20,7 @@ class ResetPasswordTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->post('api/auth/password/reset', [
+            ->post(route('api.password.reset'), [
                 'token'                 => Password::createToken($user),
                 'email'                 => $user->email,
                 'password'              => 'password',
@@ -38,7 +38,7 @@ class ResetPasswordTest extends TestCase
             'password' => 'old_password',
         ]);
 
-        $response = $this->post('api/auth/password/reset', $input + [
+        $response = $this->post(route('api.password.reset'), $input + [
             'token' => Password::createToken($user),
         ]);
 
@@ -109,7 +109,7 @@ class ResetPasswordTest extends TestCase
         ]);
 
         $response = $this->post(
-            'api/auth/password/reset',
+            route('api.password.reset'),
             $inputCallback($user)
         );
 

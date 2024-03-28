@@ -19,7 +19,7 @@ class RegisterTest extends TestCase
     {
         $response = $this
             ->actingAs(User::factory()->create())
-            ->post('api/auth/register');
+            ->post(route('api.register'));
 
         $response->assertForbidden();
     }
@@ -29,7 +29,7 @@ class RegisterTest extends TestCase
     {
         Notification::fake();
 
-        $response = $this->post('api/auth/register', $input);
+        $response = $this->post(route('api.register'), $input);
 
         $user = User::firstWhere('email', trim($input['email']));
 
@@ -158,7 +158,7 @@ class RegisterTest extends TestCase
     #[DataProvider('invalidRegisterDataProvider')]
     public function test_if_input_is_invalid_then_fails_validation(string $invalid, array $input): void
     {
-        $response = $this->post('api/auth/register', $input);
+        $response = $this->post(route('api.register'), $input);
 
         $response->assertUnprocessable();
         $response->assertInvalid($invalid);
@@ -332,7 +332,7 @@ class RegisterTest extends TestCase
     {
         config(['clients' => []]);
 
-        $response = $this->post('api/auth/register', [
+        $response = $this->post(route('api.register'), [
             'name'                  => 'New User',
             'email'                 => 'user@example.com',
             'password'              => 'password',

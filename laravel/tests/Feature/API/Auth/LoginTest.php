@@ -17,7 +17,7 @@ class LoginTest extends TestCase
     {
         $response = $this
             ->actingAs(User::factory()->create())
-            ->post('api/auth/login');
+            ->post(route('api.login'));
 
         $response->assertForbidden();
     }
@@ -30,7 +30,7 @@ class LoginTest extends TestCase
             'password' => $input['password'],
         ]);
 
-        $response = $this->post('api/auth/login', $input);
+        $response = $this->post(route('api.login'), $input);
 
         $token = $user->tokens()->first();
 
@@ -125,7 +125,7 @@ class LoginTest extends TestCase
     #[DataProvider('invalidInputDataProvider')]
     public function test_if_input_is_invalid_then_fails_validation(array $errors, array $input): void
     {
-        $response = $this->post('api/auth/login', $input);
+        $response = $this->post(route('api.login'), $input);
 
         $response->assertUnprocessable();
         $response->assertInvalid($errors);

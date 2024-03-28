@@ -26,7 +26,7 @@ class ProductUpdateTest extends TestCase
 
         $response = $this
             ->actingAs(User::factory()->create())
-            ->put('api/products/' . $product->id, $input);
+            ->put(route('api.products.update', compact('product')), $input);
         
         $updatedProduct = $product->refresh();
         
@@ -174,7 +174,7 @@ class ProductUpdateTest extends TestCase
 
         $response = $this
             ->actingAs(User::factory()->create())
-            ->put('api/products/' . $product->id, $input);
+            ->put(route('api.products.update', compact('product')), $input);
         
         $response->assertUnprocessable();
         $response->assertInvalid($invalid);
@@ -312,7 +312,7 @@ class ProductUpdateTest extends TestCase
     {
         $response = $this
             ->actingAs(User::factory()->create())
-            ->put('api/products/1', [
+            ->put(route('api.products.update', ['product' => 1]), [
                 'title'       => 'Updated Product',
                 'price'       => 99.99,
                 'currency_id' => Currency::factory()->create()->id,
@@ -329,7 +329,7 @@ class ProductUpdateTest extends TestCase
             'currency_id' => Currency::factory()->create()->id,
         ]);
 
-        $response = $this->put('api/products/' . $product->id, [
+        $response = $this->put(route('api.products.update', compact('product')), [
             'title'       => 'Updated Product',
             'price'       => 99.99,
             'currency_id' => Currency::factory()->create()->id,

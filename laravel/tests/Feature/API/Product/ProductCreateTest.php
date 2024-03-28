@@ -20,7 +20,7 @@ class ProductCreateTest extends TestCase
 
         $response = $this
             ->actingAs(User::factory()->create())
-            ->post('api/products', $input);
+            ->post(route('api.products.store'), $input);
         
         $product = Product::firstWhere('title', trim($input['title']));
         
@@ -121,7 +121,7 @@ class ProductCreateTest extends TestCase
     public function test_if_guest_then_returns_unauthorized(): void
     {
         $response = $this->post(
-            'api/products',
+            route('api.products.store'),
             Product::factory()->make()->toArray()
         );
         
@@ -133,7 +133,7 @@ class ProductCreateTest extends TestCase
     {
         $response = $this
             ->actingAs(User::factory()->create())
-            ->post('api/products', $inputCallback());
+            ->post(route('api.products.store'), $inputCallback());
 
         $response->assertUnprocessable();
         $response->assertInvalid($invalid);

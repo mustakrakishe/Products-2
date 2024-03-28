@@ -22,7 +22,7 @@ class SendPasswordResetLinkTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->post('api/auth/password/reset/send', [
+            ->post(route('api.password.reset.send'), [
                 'email' => $user->email,
             ]);
 
@@ -36,7 +36,7 @@ class SendPasswordResetLinkTest extends TestCase
 
         $user = User::factory()->create(array_map('trim', $input));
 
-        $response = $this->post('api/auth/password/reset/send', $input);
+        $response = $this->post(route('api.password.reset.send'), $input);
 
         $response->assertOk();
         $this->assertCreatesToken($user);
@@ -115,7 +115,7 @@ class SendPasswordResetLinkTest extends TestCase
             'email' => 'user@example.com',
         ]);
 
-        $response = $this->post('api/auth/password/reset/send', $input);
+        $response = $this->post(route('api.password.reset.send'), $input);
 
         $response->assertUnprocessable();
         $response->assertInvalid('email');
@@ -164,7 +164,7 @@ class SendPasswordResetLinkTest extends TestCase
     {
         config(['clients' => []]);
 
-        $response = $this->post('api/auth/password/reset/send', [
+        $response = $this->post(route('api.password.reset.send'), [
             'email' => User::factory()->create()->email,
         ]);
 

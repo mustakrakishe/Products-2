@@ -19,7 +19,7 @@ class ProductIndexTest extends TestCase
 
         $response = $this
             ->actingAs(User::factory()->create())
-            ->get('api/products');
+            ->get(route('api.products.index'));
         
         $response->assertOk();
         $response->assertJson([
@@ -56,7 +56,7 @@ class ProductIndexTest extends TestCase
     {
         $response = $this
             ->actingAs(User::factory()->create())
-            ->get('api/products');
+            ->get(route('api.products.index'));
         
         $response->assertOk();
         $response->assertJson([
@@ -66,7 +66,7 @@ class ProductIndexTest extends TestCase
 
     public function test_if_guest_then_returns_unauthorized(): void
     {
-        $response = $this->get('api/products');
+        $response = $this->get(route('api.products.index'));
         
         $response->assertUnauthorized();
     }

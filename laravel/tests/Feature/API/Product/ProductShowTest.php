@@ -18,7 +18,7 @@ class ProductShowTest extends TestCase
 
         $response = $this
             ->actingAs(User::factory()->create())
-            ->get('api/products/' . $product->id);
+            ->get(route('api.products.show', compact('product')));
         
         $response->assertOk();
         $response->assertJson([
@@ -40,7 +40,7 @@ class ProductShowTest extends TestCase
     {
         $response = $this
             ->actingAs(User::factory()->create())
-            ->get('api/products/1');
+            ->get(route('api.products.show', ['product' => 1]));
         
         $response->assertNotFound();
     }
@@ -49,7 +49,7 @@ class ProductShowTest extends TestCase
     {
         $product = Product::factory()->for(Currency::factory())->create();
 
-        $response = $this->get('api/products/' . $product->id);
+        $response = $this->get(route('api.products.show', compact('product')));
         
         $response->assertUnauthorized();
     }

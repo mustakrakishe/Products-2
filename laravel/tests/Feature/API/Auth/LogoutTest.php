@@ -12,7 +12,7 @@ class LogoutTest extends TestCase
 
     public function test_if_guest_then_returns_unauthorized(): void
     {
-        $response = $this->post('api/auth/logout');
+        $response = $this->post(route('api.logout'));
 
         $response->assertUnauthorized();
     }
@@ -28,7 +28,7 @@ class LogoutTest extends TestCase
                 'Authorization',
                 sprintf('Bearer %s', $currentToken->plainTextToken)
             )
-            ->post('api/auth/logout');
+            ->post(route('api.logout'));
 
         $response->assertNoContent();
         $this->assertCount(1, $user->tokens);

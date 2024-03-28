@@ -17,7 +17,7 @@ class ProductDeleteTest extends TestCase
 
         $response = $this
             ->actingAs(User::factory()->create())
-            ->delete('api/products/' . $product->id);
+            ->delete(route('api.products.destroy', compact('product')));
         
         $response->assertNoContent();
         $this->assertModelMissing($product);
@@ -27,7 +27,7 @@ class ProductDeleteTest extends TestCase
     {
         $product = Product::factory()->create();
 
-        $response = $this->delete('api/products/' . $product->id);
+        $response = $this->delete(route('api.products.destroy', compact('product')));
         
         $response->assertUnauthorized();
     }
@@ -36,7 +36,7 @@ class ProductDeleteTest extends TestCase
     {
         $response = $this
             ->actingAs(User::factory()->create())
-            ->delete('api/products/1');
+            ->delete(route('api.products.destroy', ['product' => 1]));
         
         $response->assertNotFound();
     }
