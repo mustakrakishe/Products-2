@@ -1,66 +1,469 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Products
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+REST API + Web UI for product management
 
-## About Laravel
+## Description
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The application allows to authorize and manage products via web UI interface or REST API.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Only three entities are used:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. User:
+- name;
+- email;
+- password.
 
-## Learning Laravel
+2. Product:
+- title;
+- price;
+- currency.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. Currency:
+- code.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Both interfaces provide the following functionality:
+- Auth:
+  - registration;
+  - email confirmation;
+  - login;
+  - password reset;
+  - logout.
+- Products:
+  - list;
+  - create;
+  - veiw details;
+  - update;
+  - delete.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Products view and management are allowed for authorized users only.
 
-## Laravel Sponsors
+## Tech stack
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+The application is developed with Laravel framework and comes with Docker environment.
 
-### Premium Partners
+## Install
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+1. Clone this repository to your project directory:
+```
+git clone https://github.com/mustakrakishe/products-2 your_project_name
+```
 
-## Contributing
+2. Go to laravel directory:
+```
+cd laravel
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Create an .env file:
+```
+cp .env.example .env
+```
 
-## Code of Conduct
+4. The .env already contains all requires preset values to start the application with Docker. However, you are free to change them.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+5. Up the docker environment:
+```
+docker compose up -d
+```
 
-## Security Vulnerabilities
+6. Enter to the php container:
+```
+docker compose exec php /bin/bash
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+7. install composer dependencies:
+```
+composer install
+```
 
-## License
+8. Run migrations:
+```
+php artisan migrate
+```
+If you want to add test data to database, add an "--seed" option:
+```
+php artisan migrate --seed
+```
+Also, you may add test data later with:
+```
+php artisan db:seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+9. Create an app secret key:
+```
+php artisan key:generate
+```
+Done.
+
+## API usage examples
+
+### Auth - Registration
+> As this API method creates an uri an API client host, it is available for trusted client list, which is set at ```config/clients.php file```, only to prevent a host spoofing.
+
+```
+// Request
+
+[POST] /api/register
+{
+  "name": "user",
+  "email": "user@example.com",
+  "password": "password",
+  "password_confirmation": "password"
+}
+
+// Response
+
+200: OK
+{
+  "message": "Follow the link at user@example.com to confirm your email."
+}
+```
+
+### Auth - Email confirmation
+
+> A link uri at email will lead to client's web ui. To verify the email you should do a get request to uri, which is contained at its "redirect" query parameter.
+
+```
+// Request
+
+[GET] /api/auth/email/verify/{id}/{hash}?expires={expires}&signature={signature}
+
+// Response
+
+200: OK
+{
+  "data": {
+    "id": 6,
+    "name": "On register",
+    "token": "6|tOUhDq3sSaQzaW70kPs4X6oqNfrWqf34NSgUNApMa08e6c05",
+    "last_used_at": null,
+    "expired_at": null,
+    "created_at": "2024-03-29 07:35:03",
+    "updated_at": "2024-03-29 07:35:03",
+    "tokenable": {
+      "id": 9,
+      "name": "user",
+      "email": "user@example.com",
+      "email_verified_at": "2024-03-29 07:35:03",
+      "created_at":"2024-03-29 07:00:28",
+      "updated_at":"2024-03-29 07:35:03"
+    }
+  }
+}
+```
+
+### Auth - Login
+
+```
+// Reuqest
+
+[POST] /api/auth/login
+{
+  "email": "user@example.com",
+  "password": "password"
+}
+
+// Response
+
+200: OK
+{
+  "data": {
+    "id": 7,
+    "name": "On login",
+    "token": "7|6JxUruMg4ErwqPWucd1UPw42H1bYJskA3i6NLv5D138a0b53",
+    "last_used_at": null,
+    "expired_at": null,
+    "created_at": "2024-03-29 07:42:49",
+    "updated_at": "2024-03-29 07:42:49",
+    "tokenable": {
+      "id": 9,
+      "name": "user",
+      "email": "user@example.com",
+      "email_verified_at": "2024-03-29 07:35:03",
+      "created_at": "2024-03-29 07:00:28",
+      "updated_at": "2024-03-29 07:35:03"
+    }
+  }
+}
+```
+
+### Auth - Send password reset link to email
+
+> As this API method creates an uri an API client host, it is available for trusted client list, which is set at ```config/clients.php file```, only to prevent a host spoofing.
+
+```
+// Request
+
+[POST] /api/auth/password/reset/send
+{
+  "email": "user@example.com"
+}
+
+// Response
+
+200: OK
+{
+  "message": "We have emailed your password reset link."
+}
+```
+
+### Auth - Reset password
+
+> A link uri at email will lead to client's web ui. To reset the password you should include a token from its uri query parameter to an api reset password post request body.
+
+```
+// Request
+
+[POST] /api/auth/password/reset
+{
+  "email": "user@example.com",
+  "token": "126546836091fe7db0cb92e0a1fb4a12a71f80426216531d41278462ac3bd80d",
+  "password": "password",
+  "password_confirmation": "password"
+}
+
+// Response
+
+200: OK
+{
+  "message": "Your password has been reset."
+}
+```
+
+### Auth - Logout
+
+```
+// Request
+
+[POST] /api/auth/logout
+
+// Response
+
+204: No Content
+```
+
+### Products - Get list
+
+```
+// Request
+
+[GET] /api/products
+
+// Response
+
+200: OK
+{
+  "data": [
+    {
+      "id": 10,
+      "title": "Ice Cream",
+      "price": 153.95,
+      "currency": {
+        "id": 2,
+        "code": "USD"
+      },
+      "created_at": "2024-03-27 06:47:33",
+      "updated_at": "2024-03-27 06:47:33"
+    },
+    {
+      "id": 9,
+      "title": "Orange Juice",
+      "price": 85.12,
+      "currency": {
+        "id": 1,
+        "code": "UAH"
+      },
+      "created_at": "2024-03-27 06:47:33",
+      "updated_at": "2024-03-27 06:47:33"
+    },
+    {
+      "id": 8,
+      "title": "Apple juice",
+      "price": 48,
+      "currency": {
+        "id": 3,
+        "code": "EUR"
+      },
+      "created_at": "2024-03-27 06:47:33",
+      "updated_at": "2024-03-27 06:47:33"
+    },
+    {
+      "id": 7,
+      "title": "Pepsi",
+      "price": 123.5,
+      "currency": {
+        "id": 2,
+        "code": "USD"
+      },
+      "created_at": "2024-03-27 06:47:33",
+      "updated_at": "2024-03-27 06:47:33"
+    },
+    {
+      "id": 6,
+      "title": "Solyanka",
+      "price": 199.01,
+      "currency": {
+        "id": 1,
+        "code": "UAH"
+      },
+      "created_at": "2024-03-27 06:47:32",
+      "updated_at": "2024-03-27 06:47:32"
+    },
+    {
+      "id": 5,
+      "title": "Philadelphia roll",
+      "price": 125.24,
+      "currency": {
+        "id": 1,
+        "code": "UAH"
+      },
+      "created_at": "2024-03-27 06:47:32",
+      "updated_at": "2024-03-27 06:47:32"
+    },
+    {
+      "id": 4,
+      "title": "Steak",
+      "price": 193,
+      "currency": {
+        "id": 2,
+        "code": "USD"
+      },
+      "created_at": "2024-03-27 06:47:32",
+      "updated_at": "2024-03-27 06:47:32"
+    }
+  ],
+  "links": {
+    "first": "https://localhost/api/products?page=1",
+    "last": "https://localhost/api/products?page=2",
+    "prev": null,
+    "next": "https://localhost/api/products?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 2,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "active": false
+      },
+      {
+        "url": "https://localhost/api/products?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": "https://localhost/api/products?page=2",
+        "label": "2",
+        "active": false
+      },
+      {
+        "url": "https://localhost/api/products?page=2",
+        "label": "Next &raquo;",
+        "active": false
+      }
+    ],
+    "path": "https://localhost/api/products",
+    "per_page": 7,
+    "to": 7,
+    "total": 10
+  }
+}
+```
+
+### Products - Create new
+
+```
+// Request
+
+[POST]   /api/products
+{
+  "title": "New Product",
+  "price": 9.99,
+  "currency_id": 1
+}
+
+// Response
+
+201: Created
+{
+  "data": {
+    "id": 11,
+    "title": "New Product",
+    "price": 9.99,
+    "currency": {
+      "id": 1,
+      "code": "UAH"
+    },
+    "created_at": "2024-03-29 08:14:20",
+    "updated_at": "2024-03-29 08:14:20"
+  }
+}
+```
+
+### Products - Show details
+
+```
+// Request
+
+[GET] /api/products/{product}
+
+// Response
+
+200: OK
+{
+  "data": {
+    "id": 1,
+    "title": "Coca-cola",
+    "price": 42.44,
+    "currency": {
+      "id": 1,
+      "code": "UAH"
+    },
+    "created_at": "2024-03-27 06:47:32",
+    "updated_at": "2024-03-27 06:47:32"
+  }
+}
+```
+
+### Products - Update
+
+```
+// Request
+
+[PUT] /api/products/{product}
+{
+  "title": "Updated Product",
+  "price": 55.55,
+  "currency_id": 2
+}
+
+// Response
+
+200: OK
+{
+  "data": {
+    "id": 11,
+    "title": "Updated Product",
+    "price": 55.55,
+    "currency": {
+      "id": 2,
+      "code": "USD"
+    },
+    "created_at": "2024-03-29 08:14:20",
+    "updated_at": "2024-03-29 08:19:47"
+  }
+}
+```
+
+### Products - Delete
+
+```
+// Request
+
+[DELETE] /api/products/{product}
+
+// Response
+
+204: No Content
+```
