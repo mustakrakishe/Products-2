@@ -14,9 +14,9 @@ class LoginController extends Controller
 {
     public function login(LoginRequest $request): JsonResponse
     {
-        $user = User::firstWhere([
-            'email' => $request->input('email'),
-        ]);
+        $user = User::where($request->only('email'))
+            ->whereNotNull('email_verified_at')
+            ->first();
 
         if (!$user || !Hash::check($request->input('password'), $user->password)) {
             return response()->json([
