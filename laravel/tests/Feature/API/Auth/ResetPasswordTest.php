@@ -101,6 +101,33 @@ class ResetPasswordTest extends TestCase
         ];
     }
 
+    public function test_if_reset_password_then_destroyes_all_tokens(): void
+    {
+        $user = User::factory()->create([
+            'email'    => 'user@example.com',
+            'password' => 'password',
+        ]);
+
+        $user->createToken('Test');
+
+        $this->assertDatabaseHas('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+        ]);
+
+        $response = $this->post(route('api.password.reset'), [
+            'email'                 => 'user@example.com',
+            'password'              => 'password',
+            'password_confirmation' => 'password',
+            'token'                 => Password::createToken($user),
+        ]);
+
+        $response->assertOk();
+
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+        ]);
+    }
+
     #[DataProvider('invalidPasswordResetDataProvider')]
     public function test_if_input_is_invalid_then_fails_validation(string $invalid, callable $inputCallback): void
     {
