@@ -13,9 +13,17 @@ class LoginTest extends TestCase
 
     public function test_if_authorized_then_redirects_to_home(): void
     {
+        User::factory()->create([
+            'email'    => 'user@example.com',
+            'password' => 'password',
+        ]);
+
         $response = $this
             ->actingAs(User::factory()->create())
-            ->post(route('login'));
+            ->post(route('login'), [
+                'email'    => 'user@example.com',
+                'password' => 'password',
+            ]);
 
         $response->assertRedirectToRoute('home');
     }
@@ -104,6 +112,11 @@ class LoginTest extends TestCase
     #[DataProvider('invalidInputDataProvider')]
     public function test_if_input_is_invalid_then_fails_validation(array $errors, array $input): void
     {
+        User::factory()->create([
+            'email'    => 'user@example.com',
+            'password' => 'password',
+        ]);
+
         $response = $this->post(
             route('login'),
             $input,
