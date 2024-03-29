@@ -4,6 +4,7 @@ namespace Tests\Feature\API\Auth;
 
 use App\Models\User;
 use Carbon\Carbon;
+use Closure;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
@@ -89,7 +90,7 @@ class VerifyTest extends TestCase
     }
 
     #[DataProvider('invalidVerifyDataProvider')]
-    public function test_if_input_is_invalid_then_returns_forbidden(callable $createUrlUsingCallback): void
+    public function test_if_input_is_invalid_then_returns_forbidden(Closure $createUrlUsingCallback): void
     {
         $user = User::factory()->create();
         $url = $createUrlUsingCallback(

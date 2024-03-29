@@ -3,6 +3,7 @@
 namespace Tests\Feature\Web\Auth;
 
 use App\Models\User;
+use Closure;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -125,7 +126,7 @@ class ResetPasswordTest extends TestCase
     }
 
     #[DataProvider('invalidInputDataProvider')]
-    public function test_if_input_is_invalid_then_fails_validation(string $invalid, callable $inputCallback): void
+    public function test_if_input_is_invalid_then_fails_validation(string $invalid, Closure $inputCallback): void
     {
         $user = User::factory()->create([
             'email' => 'user@example.com',
@@ -318,7 +319,7 @@ class ResetPasswordTest extends TestCase
     }
 
     #[DataProvider('invalidTokenDataProvider')]
-    public function test_if_token_is_invalid_then_redirects_to_link_sending(callable $inputCallback): void
+    public function test_if_token_is_invalid_then_redirects_to_link_sending(Closure $inputCallback): void
     {
         $user = User::factory()->create([
             'email' => 'user@example.com',

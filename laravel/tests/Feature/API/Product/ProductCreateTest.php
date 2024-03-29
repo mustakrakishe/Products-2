@@ -5,6 +5,7 @@ namespace Tests\Feature\API\Auth;
 use App\Models\Currency;
 use App\Models\Product;
 use App\Models\User;
+use Closure;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -14,7 +15,7 @@ class ProductCreateTest extends TestCase
     use RefreshDatabase;
 
     #[DataProvider('validInputDataProvider')]
-    public function test_if_input_is_valid_then_creates_and_returns_product(callable $inputCallback): void
+    public function test_if_input_is_valid_then_creates_and_returns_product(Closure $inputCallback): void
     {
         $input = $inputCallback();
 
@@ -129,7 +130,7 @@ class ProductCreateTest extends TestCase
     }
 
     #[DataProvider('invalidInputDataProvider')]
-    public function test_if_input_is_invalid_then_fails_validation(string $invalid, callable $inputCallback): void
+    public function test_if_input_is_invalid_then_fails_validation(string $invalid, Closure $inputCallback): void
     {
         $response = $this
             ->actingAs(User::factory()->create())
