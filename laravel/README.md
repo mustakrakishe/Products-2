@@ -75,17 +75,19 @@ docker compose exec php /bin/bash
 composer install
 ```
 
-8. Run migrations:
-```
-php artisan migrate
-```
-If you want to add test data to database, add an "--seed" option:
+8. Run migrations with a ```--seed``` option:
 ```
 php artisan migrate --seed
 ```
-Also, you may add test data later with:
+> It is required to run seeder as it populate the Currency entity and there is no way to do it, except seeder and manual in database.
+
+If you already run migrations without ```--seed``` option, you can do it futher:
 ```
 php artisan db:seed
+```
+Also, you may add products test data with:
+```
+php artisan db:seed ProductSeeder
 ```
 
 9. Create an app secret key:
