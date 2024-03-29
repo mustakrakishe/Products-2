@@ -221,4 +221,28 @@ class LoginTest extends TestCase
             ],
         ];
     }
+
+    public function test_if_email_is_not_verified_then_fails_validation(): void
+    {
+        User::factory()->create([
+            'email'             => 'user@example.com',
+            'password'          => 'password',
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->post(
+            route('login'),
+            [
+                'email'    => 'user@example.com',
+                'password' => 'password',
+            ],
+            [
+                'HTTP_REFERER' => route('login')
+            ]
+        );
+
+        $response->assertFound();
+        $response->assertRedirectToRoute('login');
+        $response->assertInvalid(['email', 'password']);
+    }
 }
