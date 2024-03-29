@@ -87,6 +87,43 @@ class ResetPasswordTest extends TestCase
         ];
     }
 
+    public function test_if_reset_password_then_destroyes_all_sessions(): void
+    {
+        $user = User::factory()->create([
+            'email'    => 'user@example.com',
+            'password' => 'password',
+        ]);
+
+        DB::table('sessions')->insert([
+            [
+                'id' => 1,
+                'user_id' => $user->id,
+                'payload' => 'payload',
+                'last_activity' => 1,
+            ]
+        ]);
+
+        $this->assertDatabaseHas('sessions', [
+            'user_id' => $user->id,
+        ]);
+
+        $response = $this->post(
+            route('password.update'),
+            [
+                'email'                 => 'user@example.com',
+                'password'              => 'new_password',
+                'password_confirmation' => 'new_password',
+                'token'                 => Password::createToken($user),
+            ],
+        );
+
+        $response->assertFound();
+        $response->assertRedirectToRoute('login');
+        $this->assertDatabaseMissing('sessions', [
+            'user_id' => $user->id,
+        ]);
+    }
+
     #[DataProvider('invalidInputDataProvider')]
     public function test_if_input_is_invalid_then_fails_validation(string $invalid, callable $inputCallback): void
     {

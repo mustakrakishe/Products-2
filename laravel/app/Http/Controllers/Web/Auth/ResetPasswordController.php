@@ -10,6 +10,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -51,6 +52,10 @@ class ResetPasswordController extends Controller
                 ])->setRememberToken(Str::random(60));
 
                 $user->save();
+
+                DB::table('sessions')
+                    ->where('user_id', $user->id)
+                    ->delete();
             }
         );
 
