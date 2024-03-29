@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\API\Product;
 
-use App\Models\Currency;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,7 +13,7 @@ class ProductShowTest extends TestCase
 
     public function test_if_authorized_then_returns_product(): void
     {
-        $product = Product::factory()->for(Currency::factory())->create();
+        $product = Product::factory()->create();
 
         $response = $this
             ->actingAs(User::factory()->create())
@@ -47,7 +46,7 @@ class ProductShowTest extends TestCase
 
     public function test_if_guest_then_returns_unauthorized(): void
     {
-        $product = Product::factory()->for(Currency::factory())->create();
+        $product = Product::factory()->create();
 
         $response = $this->get(route('api.products.show', compact('product')));
         
