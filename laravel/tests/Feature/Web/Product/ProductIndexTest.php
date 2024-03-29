@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Web\Auth;
+namespace Tests\Feature\Web\Product;
 
 use App\Models\Currency;
 use App\Models\Product;
