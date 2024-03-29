@@ -94,6 +94,17 @@ php artisan key:generate
 ```
 Done.
 
+## Usage
+
+Services are available now at: \
+```http://localhost``` - Web UI; \
+```http://localhost/api``` - REST API
+
+Also in dev mode there is possible to run autotests:
+```
+php artisan test
+```
+
 ## API usage examples
 
 ### Auth - Registration
