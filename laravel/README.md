@@ -92,6 +92,11 @@ php artisan db:seed
 ```
 php artisan key:generate
 ```
+
+10. Change ```storage``` directory owner to ```www-data```:
+```
+chown -R www-data:www-data storage
+```
 Done.
 
 ## Usage
