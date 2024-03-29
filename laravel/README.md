@@ -45,12 +45,12 @@ The application is developed with Laravel framework and comes with Docker enviro
 
 1. Clone this repository to your project directory:
 ```
-git clone https://github.com/mustakrakishe/products-2 your_project_name
+git clone https://github.com/mustakrakishe/products-2 products
 ```
 
 2. Go to laravel directory:
 ```
-cd laravel
+cd products/laravel
 ```
 
 3. Create an .env file:
